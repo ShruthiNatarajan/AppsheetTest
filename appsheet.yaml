@@ -6,10 +6,10 @@ info:
 servers:
   - url: https://api.kurtkanaskie.net/bqc/v1
 paths:
-  /persons:
+  /tableName:
     get:
       tags:
-        - Person
+        - tableName
       description: Return list of persons.
       summary: Returns list of existing persons.
       operationId: getPersons
@@ -25,7 +25,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PersonDetails'
+                $ref: '#/components/schemas/tableName'
         '400':
           description: Error
           content:
@@ -91,7 +91,7 @@ components:
         type: string
         default: '*'
   schemas:
-    PersonDetails:
+    tableName:
       type: object
       required:
         - ID
