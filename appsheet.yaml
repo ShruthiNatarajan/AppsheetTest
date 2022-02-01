@@ -1,0 +1,133 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Persons Design Pattern
+  description: Shows Persons collection RESTful design pattern, with paging query params. Uses Big Query as target and can be used by Appsheet.
+servers:
+  - url: https://api.kurtkanaskie.net/bqc/v1
+paths:
+  /persons:
+    get:
+      tags:
+        - Person
+      description: Return list of persons.
+      summary: Returns list of existing persons.
+      operationId: getPersons
+      parameters:
+        - name: client_id
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonDetails'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+security:
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-APIKey
+  parameters:
+    personIdPath:
+      in: path
+      name: id
+      description: The person identifier.
+      required: true
+      schema:
+        type: string
+    offset:
+      in: query
+      name: offset
+      description: The offset into the table to start the response, if omitted default is 0.
+      required: false
+      schema:
+        type: number
+        default: 0
+    limit:
+      in: query
+      name: limit
+      description: The number of entries to return, if omitted default is 100.
+      required: false
+      schema:
+        type: number
+        default: 100
+    orderBy:
+      in: query
+      name: orderBy
+      description: Order the results by the provided field name.
+      required: false
+      schema:
+        type: string
+        default: id
+    order:
+      in: query
+      name: order
+      description: Order the results by either ascending or descending.
+      required: false
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+    select:
+      in: query
+      name: select
+      description: Specify the comma separated fields to return.
+      required: false
+      schema:
+        type: string
+        default: '*'
+  schemas:
+    PersonDetails:
+      type: object
+      required:
+        - ID
+        - TextValue
+        - DecimalValue
+        - DateTime
+        - PhoneValue
+        - EmailValue
+      additionalProperties: false
+      properties:
+        ID:
+          type: number
+        TextValue:
+          type: string
+        DecimalValue:
+          type: number
+        DateTime:
+          type: string
+        PhoneValue:
+          type: string
+        EmailValue:
+          type: string
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        userMessage:
+          type: string
+        systemMessage:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          description: Used to pass error information in a response.
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
